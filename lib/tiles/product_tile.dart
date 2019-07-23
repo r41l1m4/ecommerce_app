@@ -1,4 +1,5 @@
 import 'package:ecommerce_app/datas/product_data.dart';
+import 'package:ecommerce_app/screens/product_screen.dart';
 import 'package:flutter/material.dart';
 
 class ProductTile extends StatelessWidget {
@@ -10,7 +11,11 @@ class ProductTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {},
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => ProductScreen(product))
+        );
+      },
       child: Card(
         elevation: 5.0,
         child: type == "grid"
