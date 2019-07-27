@@ -3,13 +3,22 @@ import 'package:ecommerce_app/screens/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
+  @override
+  _LoginScreenState createState() => _LoginScreenState();
+}
 
-    final _formKey = GlobalKey<FormState>();
+class _LoginScreenState extends State<LoginScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  final _emailController = TextEditingController();
+  final _passController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("Entrar"),
         centerTitle: true,
@@ -17,15 +26,15 @@ class LoginScreen extends StatelessWidget {
           FlatButton(
             child: Text("Criar Conta",
               style: TextStyle(
-                fontSize: 15.0
+                  fontSize: 15.0
               ),
             ),
             textColor: Colors.white,
             onPressed: () {
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                    builder: (context) => SignupScreen()
-                )
+                  MaterialPageRoute(
+                      builder: (context) => SignupScreen()
+                  )
               );
             },
           ),
@@ -42,6 +51,7 @@ class LoginScreen extends StatelessWidget {
                 padding: EdgeInsets.all(16.0),
                 children: <Widget>[
                   TextFormField(
+                    controller: _emailController,
                     decoration: InputDecoration(
                         hintText: "E-mail"
                     ),
@@ -52,6 +62,7 @@ class LoginScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 16.0,),
                   TextFormField(
+                    controller: _passController,
                     decoration: InputDecoration(
                       hintText: "Senha",
                     ),
@@ -77,9 +88,13 @@ class LoginScreen extends StatelessWidget {
                       elevation: 5.0,
                       onPressed: () {
                         if(_formKey.currentState.validate()) {
-
+                          model.signIn(
+                            email: _emailController.text,
+                            pass: _passController.text,
+                            onFail: _onFail,
+                            onSuccess: _onSuccess,
+                          );
                         }
-                        model.signIn();
                       },
                       child: Text(
                         "Entrar",
@@ -97,6 +112,31 @@ class LoginScreen extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+
+  void _onSuccess() {
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text("Usuário logado com sucesso!"),
+          backgroundColor: Theme.of(context).primaryColor,
+          duration: Duration(seconds: 2),
+          elevation: 5.0,
+        )
+    );
+    Future.delayed(Duration(seconds: 2)).then((_) {
+      Navigator.of(context).pop();
+    });
+  }
+
+  void _onFail() {
+    _scaffoldKey.currentState.showSnackBar(
+        SnackBar(
+          content: Text("Falha ao logar!"),
+          backgroundColor: Colors.redAccent,
+          duration: Duration(seconds: 2),
+          elevation: 5.0,
+        )
     );
   }
 }

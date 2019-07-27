@@ -93,7 +93,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         model.signUp(
                             userData: userData,
                             pass: _passController.text,
-                            onSucess: _onSucess,
+                            onSucess: _onSuccess,
                             onFail: _onFail
                         );
                       }
@@ -116,12 +116,13 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  void _onSucess() {
+  void _onSuccess() {
     _scaffoldKey.currentState.showSnackBar(
       SnackBar(
         content: Text("Usuário criado com sucesso!"),
         backgroundColor: Theme.of(context).primaryColor,
         duration: Duration(seconds: 2),
+        elevation: 5.0,
       )
     );
     Future.delayed(Duration(seconds: 2)).then((_) {
@@ -135,6 +136,7 @@ class _SignupScreenState extends State<SignupScreen> {
           content: Text("Falha ao criar usuário!"),
           backgroundColor: Colors.redAccent,
           duration: Duration(seconds: 2),
+          elevation: 5.0,
         )
     );
   }
