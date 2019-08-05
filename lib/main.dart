@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
     return ScopedModel<UserModel>(
       model: UserModel(),
       child: MaterialApp(
-        title: "Flutters's Clothing",
+        title: "Flutters's\nClothing",
         theme: ThemeData(
           primarySwatch: Colors.blue,
           primaryColor: Color.fromARGB(255, 4, 125, 141),
