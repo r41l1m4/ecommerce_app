@@ -1,3 +1,4 @@
+import 'package:ecommerce_app/models/cart_model.dart';
 import 'package:ecommerce_app/models/user_model.dart';
 import 'package:ecommerce_app/screens/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -14,14 +15,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModel<UserModel>(
       model: UserModel(),
-      child: MaterialApp(
-        title: "Flutters's\nClothing",
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          primaryColor: Color.fromARGB(255, 4, 125, 141),
-        ),
-        home: HomeScreen(),
-        debugShowCheckedModeBanner: false,
+      child: ScopedModelDescendant<UserModel>(
+        builder: (context, child, model) {
+          return ScopedModel<CartModel>(
+            model: CartModel(model),
+            child: MaterialApp(
+              title: "Flutters's\nClothing",
+              theme: ThemeData(
+                primarySwatch: Colors.blue,
+                primaryColor: Color.fromARGB(255, 4, 125, 141),
+              ),
+              home: HomeScreen(),
+              debugShowCheckedModeBanner: false,
+            ),
+          );
+        },
       ),
     );
   }
