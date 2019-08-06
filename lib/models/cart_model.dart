@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:ecommerce_app/datas/cart_product.dart';
 import 'package:ecommerce_app/models/user_model.dart';
+import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class CartModel extends Model {
@@ -10,11 +11,13 @@ class CartModel extends Model {
 
   CartModel(this.user);
 
+  static CartModel of(BuildContext context) => ScopedModel.of<CartModel>(context);
+
   void addCartItem(CartProduct product) {
     products.add(product);
 
     Firestore.instance
-        .collection("user")
+        .collection("users")
         .document(user.firebaseUser.uid)
         .collection("cart")
         .add(product.toMap())
