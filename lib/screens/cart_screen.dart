@@ -2,6 +2,7 @@ import 'package:ecommerce_app/models/cart_model.dart';
 import 'package:ecommerce_app/models/user_model.dart';
 import 'package:ecommerce_app/screens/login_screen.dart';
 import 'package:ecommerce_app/tiles/cart_tile.dart';
+import 'package:ecommerce_app/widgets/cart_price.dart';
 import 'package:ecommerce_app/widgets/discount_card.dart';
 import 'package:ecommerce_app/widgets/ship_card.dart';
 import 'package:flutter/material.dart';
@@ -90,6 +91,7 @@ class CartScreen extends StatelessWidget {
                   ),
                   DiscountCard(),
                   ShipCard(),
+                  CartPrice((){}),
                 ],
               );
             }
