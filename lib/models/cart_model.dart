@@ -15,7 +15,7 @@ class CartModel extends Model {
   bool isLoading = false;
 
   CartModel(this.user) {
-    if(user.isLoggedIn()) {
+    if (user.isLoggedIn()) {
       _loadCartItems();
     }
   }
@@ -84,7 +84,8 @@ class CartModel extends Model {
         .collection("cart")
         .getDocuments();
 
-    products = query.documents.map((doc) => CartProduct.fromDocument(doc)).toList();
+    products =
+        query.documents.map((doc) => CartProduct.fromDocument(doc)).toList();
 
     notifyListeners();
   }
@@ -96,8 +97,8 @@ class CartModel extends Model {
 
   double getProductsPrice() {
     double price = 0.0;
-    for(CartProduct c in products) {
-      if(c.productData != null) {
+    for (CartProduct c in products) {
+      if (c.productData != null) {
         price += c.quantity * c.productData.price;
       }
     }
@@ -106,8 +107,8 @@ class CartModel extends Model {
 
   double getShipPrice() {
     return 9.99;
-
   }
+
   double getDiscount() {
     return getProductsPrice() * discountPercentage / 100;
   }
@@ -116,4 +117,53 @@ class CartModel extends Model {
     notifyListeners();
   }
 
+  Future<String> finishOrder() async {
+    if (products.isEmpty) return null;
+
+    isLoading = true;
+
+    notifyListeners();
+
+    double productsPrice = getProductsPrice();
+    double shipPrice = getShipPrice();
+    double discount = getDiscount();
+
+    DocumentReference refOrder =
+        await Firestore.instance.collection("orders").add({
+      "clientId": user.firebaseUser.uid,
+      "products": products.map((cartProduct) => cartProduct.toMap()).toList(),
+      "shipPrice": shipPrice,
+      "productsPrice": productsPrice,
+      "discount": discount,
+      "total": productsPrice - discount + shipPrice,
+      "status": 1
+    });
+
+    await Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("orders")
+        .document(refOrder.documentID)
+        .setData({"orderId": refOrder.documentID});
+
+    QuerySnapshot query = await Firestore.instance
+        .collection("users")
+        .document(user.firebaseUser.uid)
+        .collection("cart")
+        .getDocuments();
+
+    for (DocumentSnapshot doc in query.documents) {
+      doc.reference.delete();
+    }
+
+    products.clear();
+    discountPercentage = 0;
+    couponCode = null;
+
+    isLoading = false;
+
+    notifyListeners();
+
+    return refOrder.documentID;
+  }
 }
